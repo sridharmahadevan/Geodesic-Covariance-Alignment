@@ -1,0 +1,87 @@
+%% LyX 1.1 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+
+\makeatletter
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\providecommand{\LyX}{L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
+
+\makeatother
+
+\begin{document}
+
+
+\title{Mextools}
+
+\maketitle
+
+\section{Einführung\label{intro}}
+
+Bei den Mextools-Files handelt es sich um eine Sammlung von C++ Header und Programmdateien,
+die die Arbeit mit Mex-Dateien, also C bzw. C++ Source-Code, der kompiliert
+und dynamisch zu Matlab angelinkt wird und dann dort als Funktion zur Verfügung
+steht. Die Mextools-Files ermöglichen es, bestehenden Mex-Source-Code nahezu
+unverändert entweder zu einem standalone Unix-Binary oder zu einem Octave-Okt-File
+zu kompilieren. 
+
+Dazu muß im Mex-Source-Code lediglich statt des obligatorischen mex.h die Datei
+mextools.h included werden. Wozu der Code dann kompiliert wird, entscheidet
+dann allein der Aufruf, mit dem der Code kompiliert wird:
+
+\begin{enumerate}
+\item Wird wie gewohnt von der Matlab-Kommandozeile aus mit dem Befehl {\tt mex file.cpp}
+kompiliert, entsteht wie gewohnt die Mex-Dll-Datei, die dann wie ein eingebautes
+Matlab-Kommando verwendet werden kann.
+\item Wird von der Unix-Kommandozeile aus mit dem normalen C/C++ Kompiler (z.B. {\tt g++ file.cpp})
+kompiliert, entsteht ein standalone Unix-Binary, das seine Eingabeargumente
+aus einer Argumentendatei liest und evtl. einigen ASCII-Datensätzen liest und
+das seine Ausgabeargumente in ASCII-Dateien schreibt.
+\item Wird von der Unix-Kommandozeile aus mit dem Befehl {\tt mkoctfile file.cpp}
+kompiliert, entsteht ein Octave-Okt-File, der von dem freien Matlab-Clone Octave
+aus ähnlich der Matlab-Mex-DLL benutzt werden kann.
+\end{enumerate}
+
+\section{Einschränkugen}
+
+In Anwendungsart 1 (siehe \ref{intro}) steht natürlich wie gewohnt die volle
+Funktionalität der Mex-Api zur Verfügung, sie wird ja von Matlab selbst bereitgestellt.
+In den beiden anderen Anwendungsarten wird die Mex-Api von dem Mextools-Code
+emuliert, daher steht nur eine Auswahl der Mex-Api zur Verfügung. Momentan sind
+nur einfache numerische mxArrays und einfache Character mxArrays implementiert.
+Weder Strukturen, Cell-Arrays oder Objekte sind verfügbar. Auch sind keine Matlab-Engine
+oder I/O-Aufrufe möglich.
+
+
+\section{Standalone Unix-Binaries}
+
+Die Möglichkeit, aus Mx-Source-Code ein Unix-Binary zu erzeugen, ist besonders
+interessant im Hinblick, wenn Source-Code, den man anfangs bequem unter Matlab
+entwickelt hat, auf sehr große Probleme angewendet werden soll, wo evtl. Rechenzeiten
+von mehreren Tagen entstehen können. Während dieser Zeit sollen aber sicher
+die teuren Lizenzen nicht unnötig blockiert sein.
+
+Nach dem Kompilieren kann das Binary (nennen wir es a.out) mit folgendem Syntax
+von der Unix-Kommandozeile aus aufgerufen werden: {\code a.out argumentfile.txt nr_arguments}
+
+
+\section{Zusätzliche Features}
+
+Die Mextools-Dateinen stellen eine einfache, lightweight Matrix-Klasse sowie
+eine einfache Vektor-Klasse zur Verfügung (siehe File mextools.h). 
+
+\begin{itemize}
+\item class mmatrix
+\item class mvector
+\end{itemize}
+Diese können sowohl auf bestehende mxArrays aufgesetzt werden, wobei sie auf
+den Datenbereich des mxArrays zugreift, als auch selbst Speicher allokieren,
+der am Ende der Lebensdauer des Objektes automatisch wieder freigegeben wird.
+Diese Klasse dienen damit hauptsächlich dazu, dem Programmierer bequemen Zugriff
+auf die Elemente einer reellen Matrix bzw. eines reellen Vektors zu geben (eins-basierte
+Notation).
+
+\end{document}

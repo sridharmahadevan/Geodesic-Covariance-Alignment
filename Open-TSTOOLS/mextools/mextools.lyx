@@ -1,0 +1,244 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Mextools
+\layout Section
+
+Einführung
+\begin_inset LatexCommand \label{intro}
+
+\end_inset 
+
+
+\layout Standard
+
+Bei den Mextools-Files handelt es sich um eine Sammlung von C++ Header und
+ Programmdateien, die die Arbeit mit Mex-Dateien, also C bzw.
+ C++ Source-Code, der kompiliert und dynamisch zu Matlab angelinkt wird
+ und dann dort als Funktion zur Verfügung steht.
+ Die Mextools-Files ermöglichen es, bestehenden Mex-Source-Code nahezu unverände
+rt entweder zu einem standalone Unix-Binary oder zu einem Octave-Okt-File
+ zu kompilieren.
+ 
+\layout Standard
+
+Dazu muß im Mex-Source-Code lediglich statt des obligatorischen mex.h die
+ Datei mextools.h included werden.
+ Wozu der Code dann kompiliert wird, entscheidet dann allein der Aufruf,
+ mit dem der Code kompiliert wird:
+\layout Enumerate
+
+Wird wie gewohnt von der Matlab-Kommandozeile aus mit dem Befehl 
+\latex latex 
+{
+\backslash 
+tt
+\latex default 
+ 
+\latex latex 
+mex file.cpp}
+\latex default 
+ kompiliert, entsteht wie gewohnt die Mex-Dll-Datei, die dann wie ein eingebaute
+s Matlab-Kommando verwendet werden kann.
+\layout Enumerate
+
+Wird von der Unix-Kommandozeile aus mit dem normalen C/C++ Kompiler (z.B.
+ 
+\latex latex 
+{
+\backslash 
+tt g++ file.cpp}
+\latex default 
+) kompiliert, entsteht ein standalone Unix-Binary, das seine Eingabeargumente
+ aus einer Argumentendatei liest und evtl.
+ einigen ASCII-Datensätzen liest und das seine Ausgabeargumente in ASCII-Dateien
+ schreibt.
+\layout Enumerate
+
+Wird von der Unix-Kommandozeile aus mit dem Befehl 
+\latex latex 
+{
+\backslash 
+tt
+\latex default 
+ 
+\latex latex 
+mkoctfile file.cpp}
+\latex default 
+ kompiliert, entsteht ein Octave-Okt-File, der von dem freien Matlab-Clone
+ Octave aus ähnlich der Matlab-Mex-DLL benutzt werden kann.
+\layout Section
+
+Einschränkugen
+\layout Standard
+
+In Anwendungsart 1 (siehe Kapitel 
+\begin_inset LatexCommand \ref{intro}
+
+\end_inset 
+
+) steht natürlich wie gewohnt die volle
+\latex latex 
+ Funk
+\backslash 
+-tio
+\backslash 
+-na
+\backslash 
+-lität
+\latex default 
+ der Mex-Api zur Verfügung, sie wird ja von Matlab selbst bereitgestellt.
+ In den beiden anderen Anwendungsarten wird die Mex-Api von dem Mextools-Code
+ emuliert, daher steht nur eine Auswahl der Mex-Api zur Verfügung.
+ Momentan sind nur einfache numerische mxArrays und einfache Character mxArrays
+ implementiert.
+ Weder Strukturen, Cell-Arrays oder Objekte sind verfügbar.
+ Auch sind keine Matlab-Engine oder I/O-Aufrufe möglich.
+\layout Section
+
+Standalone Unix-Binaries
+\layout Standard
+
+Die Möglichkeit, aus Mx-Source-Code ein Unix-Binary zu erzeugen, ist besonders
+ interessant im Hinblick, wenn Source-Code, den man anfangs bequem unter
+ Matlab entwickelt hat, auf sehr große Probleme angewendet werden soll,
+ wo evtl.
+ Rechenzeiten von mehreren Tagen entstehen können.
+ Während dieser Zeit sollen aber sicher die teuren Lizenzen nicht unnötig
+ blockiert sein.
+\layout Standard
+
+Nach dem Kompilieren kann das Binary (nennen wir es a.out) mit folgendem
+ Syntax von der Unix-Kommandozeile aus aufgerufen werden:
+\latex latex 
+
+\backslash 
+newline
+\backslash 
+mbox{
+\backslash 
+tt
+\latex default 
+ 
+\latex latex 
+a.out argumentfile.txt nr
+\backslash 
+_arguments}
+\backslash 
+newline
+\latex default 
+ Dabei ist das erste Argument der Name einer Textdatei, die die eigentlichen
+ Argumente, die dem Mex-File sonst auf der Matlab-Kommandozeile gegeben
+ würden, enthält.
+ Das zweite Argument ist die Zahl der gewünschten Ausgabeargumente.
+ Diese werden in ASCII-Dateien mit Namen 
+\latex latex 
+{
+\backslash 
+tt a.out
+\backslash 
+_out0.dat}
+\latex default 
+, 
+\latex latex 
+{
+\backslash 
+tt a.out
+\backslash 
+_out1.dat},
+\backslash 
+dots
+\latex default 
+ abgelegt.
+\layout Subsection
+
+Format der Argumentendatei
+\layout Standard
+
+Jede Zeile der Argumentendatei enthält ein Argument.
+ Dies kann sein:
+\layout Itemize
+
+Eine Zahl (Skalar), z.B.
+ 
+\latex latex 
+{
+\backslash 
+tt 23.34623}
+\latex default 
+.
+ Diese wird direkt als 1 kreuz 1 Matrix dem Mex-File übergeben.
+\layout Itemize
+
+Ein Zeilenvektor in der Form
+\latex latex 
+ {
+\backslash 
+tt [35.33 1.335 -45.2 18.2 -99.125]}
+\latex default 
+.
+\layout Itemize
+
+Der Name eine ASCII-Datei, die als Matrixargument eingelesen werden soll,
+ z.B.
+ 
+\latex latex 
+{
+\backslash 
+tt messwerte.dat}.
+\layout Itemize
+
+Ein String in Hochkommata, z.B.
+ 
+\latex latex 
+{
+\backslash 
+tt 'hello world'}
+\layout Section
+
+Zusätzliche Features
+\layout Standard
+
+Die Mextools-Dateinen stellen eine einfache, lightweight Matrix-Klasse sowie
+ eine einfache Vektor-Klasse zur Verfügung (siehe File mextools.h).
+ 
+\layout Itemize
+
+class mmatrix
+\layout Itemize
+
+class mvector
+\layout Standard
+
+Diese können einfach auf bestehende mxArrays aufgesetzt werden, wobei sie
+ auf den Datenbereich des mxArrays zugreifen, oder aber selbst Speicher
+ allokieren, der am Ende der Lebensdauer des Objektes automatisch wieder
+ freigegeben wird.
+ Diese Klasse dienen damit hauptsächlich dazu, dem Programmierer bequemen
+ Zugriff auf die Elemente einer reellen Matrix bzw.
+ eines reellen Vektors zu geben (mit eins-basierte Notation, z.B.
+ v(5) oder A(3,8) ).
+\the_end
